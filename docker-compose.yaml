@@ -1,0 +1,26 @@
+services:
+  webapp:
+    image: yeasy/simple-web:latest
+    container_name: webapp
+    pull_policy: always
+    restart: always
+    ports:
+      - 8080:80
+  haproxy:
+      image: haproxy:2.7
+      volumes:
+          - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+          - ./certificate.pem:/usr/local/etc/haproxy/certificate.pem
+      ports:
+          - "90:90"
+          - "943:943"
+  nginx:
+      image: nginx:latest
+      depends_on:
+        - webapp
+      ports:
+        - 783:783
+        - 743:743
+      volumes:
+        - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+        - ./certificate.pem:/etc/nginx/conf.d/certificate.pem
